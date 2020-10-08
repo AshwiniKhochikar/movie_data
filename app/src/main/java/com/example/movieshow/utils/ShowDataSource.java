@@ -40,16 +40,21 @@ public class ShowDataSource extends androidx.paging.PageKeyedDataSource<Integer,
         Log.i(TAG, "Load initial " +mSearchKey +" first page " + FIRST_PAGE);
 
         Call<SearchResponse> call = mRepository.getSearchResult(mSearchKey, FIRST_PAGE);
+        //noinspection NullableProblems
         call.enqueue(new Callback<SearchResponse>()
         {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response)
             {
                 Log.i(TAG, "Initial load completed");
-                if(response == null || response.body()==null) return;
-                //Log.i(TAG, "response size is " + response.body().getShowDetailsList());
-                FIRST_PAGE++;
-                callback.onResult(response.body().getShowDetailsList(), null, FIRST_PAGE);
+
+                //FIRST_PAGE++;
+                assert response.body() != null;
+                if(response.body().getShowDetailsList() != null){
+                    Log.i(TAG, "response;;"+response);
+                    callback.onResult(response.body().getShowDetailsList(), null, FIRST_PAGE);
+                }
+
             }
 
             @Override
@@ -70,14 +75,19 @@ public class ShowDataSource extends androidx.paging.PageKeyedDataSource<Integer,
         Log.i(TAG, "Load before");
         Log.i(TAG, "Load After " +mSearchKey +" page "+ params.key);
         Call<SearchResponse> call = mRepository.getSearchResult(mSearchKey, params.key);
+        //noinspection NullableProblems
         call.enqueue(new Callback<SearchResponse>()
         {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response)
             {
                 Log.i(TAG, "After load completed");
-                if(response == null || response.body()==null) return;
-                callback.onResult(response.body().getShowDetailsList(), params.key + 1);
+                assert response.body() != null;
+                if(response.body().getShowDetailsList() != null){
+                    callback.onResult(response.body().getShowDetailsList(), params.key + 1);
+                }
+                //if(response == null || response.body()==null) return;
+
             }
 
             @Override
@@ -97,14 +107,18 @@ public class ShowDataSource extends androidx.paging.PageKeyedDataSource<Integer,
     {
         Log.i(TAG, "Load After " +mSearchKey +" page "+ params.key);
         Call<SearchResponse> call = mRepository.getSearchResult(mSearchKey, params.key);
+        //noinspection NullableProblems
         call.enqueue(new Callback<SearchResponse>()
         {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response)
             {
-                Log.i(TAG, "After load completed");
-                if(response == null || response.body()==null) return;
-                callback.onResult(response.body().getShowDetailsList(), params.key + 1);
+                Log.i(TAG, "After load completed--");
+                assert response.body() != null;
+                if(response.body().getShowDetailsList() != null){
+                    callback.onResult(response.body().getShowDetailsList(), params.key + 1);
+                }
+
             }
 
             @Override

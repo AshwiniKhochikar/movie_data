@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mExecutor = new ThreadExecutor();
-        initResultRecylerView();
-        mShowViewModel = ViewModelProviders.of(this).get(ShowMovies.class);
-        observe();
+
         loadDefaultSearch();
+        initResultRecylerView();
     }
+
 
     private void observe()
     {
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 Log.i(TAG, "On Changed  list size is " + (showSearchDetails!=null?showSearchDetails.size():0));
                 mAdapter.submitList(showSearchDetails);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onQueryTextSubmit(String query)
                 {
                     Log.i(TAG, "Text Submitted " + query);
-                    mSearchKey = query;
-                    refreshData(mSearchKey);
+                    //mSearchKey = query;
+                    refreshData(query);
                     return true;
                 }
 
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private void initResultRecylerView()
     {
         mRecyclerView = findViewById(R.id.showListRecylerView);
-        mRecyclerView.setHasFixedSize(true);
+        //mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new ShowListAdapter(this, showClickListener);
@@ -152,8 +153,9 @@ public class MainActivity extends AppCompatActivity {
     public void refreshData(String mSearchKey)
     {
         Log.i(TAG, "Search key is "+mSearchKey);
+        mShowViewModel = ViewModelProviders.of(this).get(ShowMovies.class);
         mShowViewModel.searchShow(mSearchKey, mExecutor);
-
+        observe();
     }
 
 }
